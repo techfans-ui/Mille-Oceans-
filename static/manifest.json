@@ -12,6 +12,14 @@
     "lang": "fr",
     "dir": "ltr",
     "categories": ["business", "productivity"],
+    "prefer_related_applications": false,
+    "handle_links": "preferred",
+    "launch_handler": {
+        "client_mode": "navigate-existing"
+    },
+    "edge_side_panel": {
+        "preferred_width": 480
+    },
     "screenshots": [
         {
             "src": "/static/img/screenshot-wide.png",
