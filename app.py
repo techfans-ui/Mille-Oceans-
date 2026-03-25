@@ -95,6 +95,10 @@ def create_app(config_class=None):
         response.headers['Cache-Control'] = 'no-cache'
         return response
 
+    @app.route('/offline')
+    def offline():
+        return render_template('offline.html')
+
     # ------------------------------------------------------------------
     # Helpers
     # ------------------------------------------------------------------

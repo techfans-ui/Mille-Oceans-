@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hors connexion — Mille Oceans</title>
+    <meta name="theme-color" content="#0077b6">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #023e8a 0%, #0077b6 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+        .container { max-width: 480px; }
+        .icon { font-size: 4rem; margin-bottom: 1.5rem; }
+        h1 { font-size: 1.6rem; margin-bottom: .75rem; font-weight: 700; }
+        p { font-size: 1rem; opacity: .85; margin-bottom: 2rem; line-height: 1.5; }
+        button {
+            background: #fff; color: #023e8a; border: none;
+            padding: .75rem 2rem; border-radius: .5rem;
+            font-size: 1rem; font-weight: 600; cursor: pointer;
+            transition: transform .15s;
+        }
+        button:hover { transform: scale(1.05); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">🌊</div>
+        <h1>Vous êtes hors connexion</h1>
+        <p>Impossible de se connecter au serveur. Vérifiez votre connexion internet et réessayez.</p>
+        <button onclick="window.location.reload()">Réessayer</button>
+    </div>
+</body>
+</html>
