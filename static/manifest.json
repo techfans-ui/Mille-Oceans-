@@ -2,7 +2,7 @@
     "name": "Mille Oceans - Gestion de Stock",
     "short_name": "Mille Oceans",
     "description": "Application de gestion des stocks de boissons pour Mille Oceans",
-    "start_url": "/dashboard",
+    "start_url": "/",
     "scope": "/",
     "display": "standalone",
     "background_color": "#023e8a",
@@ -11,7 +11,22 @@
     "lang": "fr",
     "dir": "ltr",
     "categories": ["business", "productivity"],
-    "screenshots": [],
+    "screenshots": [
+        {
+            "src": "/static/img/screenshot-wide.png",
+            "sizes": "1280x720",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "Tableau de bord Mille Oceans"
+        },
+        {
+            "src": "/static/img/screenshot-narrow.png",
+            "sizes": "750x1334",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "Vue mobile du tableau de bord"
+        }
+    ],
     "shortcuts": [
         {
             "name": "Tableau de bord",

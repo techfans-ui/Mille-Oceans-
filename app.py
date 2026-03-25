@@ -10,7 +10,7 @@ from datetime import datetime, timezone, timedelta
 from functools import wraps
 
 from flask import (Flask, render_template, request, redirect, url_for,
-                   flash, jsonify, abort, Response)
+                   flash, jsonify, abort, Response, send_from_directory)
 from flask_login import (LoginManager, login_user, logout_user,
                           login_required, current_user)
 from sqlalchemy import func, desc
@@ -77,6 +77,23 @@ def create_app(config_class=None):
     def internal_error(e):
         db.session.rollback()
         return render_template('500.html'), 500
+
+    # ------------------------------------------------------------------
+    # PWA — serve manifest and service worker from root
+    # ------------------------------------------------------------------
+
+    @app.route('/manifest.json')
+    def pwa_manifest():
+        return send_from_directory(app.static_folder, 'manifest.json',
+                                   mimetype='application/manifest+json')
+
+    @app.route('/sw.js')
+    def pwa_sw():
+        response = send_from_directory(app.static_folder, 'sw.js',
+                                        mimetype='application/javascript')
+        response.headers['Service-Worker-Allowed'] = '/'
+        response.headers['Cache-Control'] = 'no-cache'
+        return response
 
     # ------------------------------------------------------------------
     # Helpers
