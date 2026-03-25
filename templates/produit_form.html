@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Modifier' if produit else 'Nouveau' }} produit — Mille Oceans{% endblock %}
+{% block page_title %}Produits > {{ 'Modifier' if produit else 'Ajouter' }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="stat-card p-4">
+            <h5 class="fw-bold mb-4">
+                <i class="bi bi-{{ 'pencil' if produit else 'plus-circle' }} text-primary"></i>
+                {{ 'Modifier le produit' if produit else 'Nouveau produit' }}
+            </h5>
+            <form method="POST">
+                <div class="row g-3">
+                    <!-- Infos principales -->
+                    <div class="col-md-8">
+                        <label class="form-label fw-semibold">Nom du produit *</label>
+                        <input type="text" name="nom" class="form-control" value="{{ produit.nom if produit else '' }}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Code-barre</label>
+                        <input type="text" name="code_barre" class="form-control" value="{{ produit.code_barre if produit and produit.code_barre else '' }}">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Catégorie *</label>
+                        <select name="categorie_id" class="form-select" required>
+                            <option value="">— Choisir —</option>
+                            {% for c in categories %}
+                            <option value="{{ c.id }}" {{ 'selected' if produit and produit.categorie_id == c.id }}>{{ c.nom }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Fournisseur</label>
+                        <select name="fournisseur_id" class="form-select">
+                            <option value="">— Aucun —</option>
+                            {% for f in fournisseurs %}
+                            <option value="{{ f.id }}" {{ 'selected' if produit and produit.fournisseur_id == f.id }}>{{ f.nom }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Description</label>
+                        <textarea name="description" class="form-control" rows="2">{{ produit.description if produit else '' }}</textarea>
+                    </div>
+
+                    <!-- Marque / Volume -->
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Marque</label>
+                        <input type="text" name="marque" class="form-control" value="{{ produit.marque if produit else '' }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Volume</label>
+                        <input type="text" name="volume" class="form-control" placeholder="ex: 33cl, 75cl, 1L" value="{{ produit.volume if produit else '' }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Degré d'alcool (%)</label>
+                        <input type="number" name="degre_alcool" class="form-control" step="0.1" min="0" value="{{ produit.degre_alcool if produit else 0 }}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Pays d'origine</label>
+                        <input type="text" name="pays_origine" class="form-control" value="{{ produit.pays_origine if produit else '' }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Unité de mesure</label>
+                        <select name="unite" class="form-select">
+                            {% for u in ['unité', 'bouteille', 'carton', 'caisse', 'pack', 'litre', 'fût'] %}
+                            <option {{ 'selected' if produit and produit.unite == u }}>{{ u }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <hr class="my-2">
+
+                    <!-- Stock (seulement à la création) -->
+                    {% if not produit %}
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Quantité initiale</label>
+                        <input type="number" name="quantite_stock" class="form-control" value="0" min="0">
+                    </div>
+                    {% endif %}
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Stock minimum</label>
+                        <input type="number" name="stock_minimum" class="form-control" value="{{ produit.stock_minimum if produit else 10 }}" min="0">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Stock maximum</label>
+                        <input type="number" name="stock_maximum" class="form-control" value="{{ produit.stock_maximum if produit else 200 }}" min="1">
+                    </div>
+
+                    <hr class="my-2">
+
+                    <!-- Prix -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Prix d'achat (FCFA)</label>
+                        <input type="number" name="prix_achat" class="form-control" step="0.01" min="0" value="{{ produit.prix_achat if produit else 0 }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Prix de vente (FCFA)</label>
+                        <input type="number" name="prix_vente" class="form-control" step="0.01" min="0" value="{{ produit.prix_vente if produit else 0 }}">
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg"></i> {{ 'Enregistrer' if produit else 'Ajouter le produit' }}
+                    </button>
+                    <a href="{{ url_for('produits_list') }}" class="btn btn-outline-secondary">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Catégories — Mille Oceans{% endblock %}
+{% block page_title %}Inventaire > Catégories{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0"><i class="bi bi-tags text-primary"></i> Catégories</h4>
+    {% if current_user.is_manager() %}
+    <a href="{{ url_for('categorie_add') }}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Nouvelle catégorie</a>
+    {% endif %}
+</div>
+
+<div class="row g-3">
+    {% for cat in categories %}
+    <div class="col-md-4">
+        <div class="stat-card p-3 h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-3 p-2 bg-{{ cat.couleur }} bg-opacity-10">
+                        <i class="bi {{ cat.icone }} text-{{ cat.couleur }} fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-0">{{ cat.nom }}</h6>
+                        <span class="text-muted small">{{ cat.nb_produits }} produit(s)</span>
+                    </div>
+                </div>
+                {% if current_user.is_manager() %}
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{{ url_for('categorie_edit', cat_id=cat.id) }}"><i class="bi bi-pencil"></i> Modifier</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('produits_list') }}?categorie={{ cat.id }}"><i class="bi bi-eye"></i> Voir produits</a></li>
+                        {% if current_user.is_admin() and cat.nb_produits == 0 %}
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form method="POST" action="{{ url_for('categorie_delete', cat_id=cat.id) }}" onsubmit="return confirm('Supprimer ?')">
+                                <button class="dropdown-item text-danger"><i class="bi bi-trash"></i> Supprimer</button>
+                            </form>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+            {% if cat.description %}
+            <p class="text-muted small mt-2 mb-1">{{ cat.description }}</p>
+            {% endif %}
+            <div class="small text-muted mt-2">Stock total : <strong>{{ cat.stock_total }}</strong> unités</div>
+        </div>
+    </div>
+    {% endfor %}
+    {% if not categories %}
+    <div class="col-12 text-center text-muted py-5">Aucune catégorie. <a href="{{ url_for('categorie_add') }}">Créer la première</a></div>
+    {% endif %}
+</div>
+{% endblock %}

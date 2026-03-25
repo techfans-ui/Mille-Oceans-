@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Entrée' if type_mv == 'entree' else ('Sortie' if type_mv == 'sortie' else 'Ajustement') }} de stock — Mille Oceans{% endblock %}
+{% block page_title %}Mouvements > {{ 'Entrée' if type_mv == 'entree' else ('Sortie' if type_mv == 'sortie' else 'Ajustement') }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="stat-card p-4">
+            <h5 class="fw-bold mb-4">
+                {% if type_mv == 'entree' %}
+                <i class="bi bi-box-arrow-in-down text-success"></i> Entrée de stock
+                {% elif type_mv == 'sortie' %}
+                <i class="bi bi-box-arrow-up text-warning"></i> Sortie de stock
+                {% else %}
+                <i class="bi bi-sliders text-info"></i> Ajustement de stock
+                {% endif %}
+            </h5>
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Produit *</label>
+                    <select name="produit_id" class="form-select" id="produit_select" required>
+                        <option value="">— Sélectionner un produit —</option>
+                        {% for p in produits %}
+                        <option value="{{ p.id }}" data-stock="{{ p.quantite_stock }}" data-unite="{{ p.unite }}" data-prix="{{ p.prix_achat }}">
+                            {{ p.nom }} (stock: {{ p.quantite_stock }} {{ p.unite }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div id="stock_info" class="alert alert-light d-none mb-3">
+                    Stock actuel : <strong id="current_stock">0</strong> <span id="current_unite"></span>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">
+                            {% if type_mv == 'ajustement' %}Nouvelle quantité *{% else %}Quantité *{% endif %}
+                        </label>
+                        <input type="number" name="quantite" class="form-control" min="{% if type_mv == 'ajustement' %}0{% else %}1{% endif %}" required>
+                    </div>
+                    {% if type_mv == 'entree' %}
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Prix unitaire (FCFA)</label>
+                        <input type="number" name="prix_unitaire" class="form-control" step="0.01" min="0" id="prix_input">
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Motif</label>
+                    <select name="motif" class="form-select">
+                        {% if type_mv == 'entree' %}
+                        <option value="Livraison fournisseur">Livraison fournisseur</option>
+                        <option value="Retour client">Retour client</option>
+                        <option value="Transfert">Transfert</option>
+                        <option value="Autre">Autre</option>
+                        {% elif type_mv == 'sortie' %}
+                        <option value="Vente">Vente</option>
+                        <option value="Consommation interne">Consommation interne</option>
+                        <option value="Transfert">Transfert</option>
+                        <option value="Autre">Autre</option>
+                        {% else %}
+                        <option value="Inventaire physique">Inventaire physique</option>
+                        <option value="Correction d'erreur">Correction d'erreur</option>
+                        <option value="Autre">Autre</option>
+                        {% endif %}
+                    </select>
+                </div>
+
+                {% if type_mv in ('entree', 'sortie') %}
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Référence (bon de livraison, facture…)</label>
+                    <input type="text" name="reference" class="form-control" placeholder="BL-2026-001">
+                </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Notes</label>
+                    <textarea name="notes" class="form-control" rows="2"></textarea>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-{{ 'success' if type_mv == 'entree' else ('warning' if type_mv == 'sortie' else 'info') }} btn-lg">
+                        <i class="bi bi-check-lg"></i> Valider
+                    </button>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary btn-lg">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('produit_select').addEventListener('change', function() {
+    const opt = this.options[this.selectedIndex];
+    const info = document.getElementById('stock_info');
+    if (this.value) {
+        info.classList.remove('d-none');
+        document.getElementById('current_stock').textContent = opt.dataset.stock;
+        document.getElementById('current_unite').textContent = opt.dataset.unite + '(s)';
+        const prixInput = document.getElementById('prix_input');
+        if (prixInput) prixInput.value = opt.dataset.prix;
+    } else {
+        info.classList.add('d-none');
+    }
+});
+</script>
+{% endblock %}

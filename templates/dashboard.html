@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+{% block title %}Tableau de bord — Mille Oceans{% endblock %}
+{% block page_title %}Tableau de bord{% endblock %}
+
+{% block content %}
+<!-- Stats Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-3 p-2 bg-primary bg-opacity-10">
+                    <i class="bi bi-box-seam text-primary fs-4"></i>
+                </div>
+                <div>
+                    <div class="fs-4 fw-bold">{{ stats.total_produits }}</div>
+                    <div class="text-muted small">Produits</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-3 p-2 bg-success bg-opacity-10">
+                    <i class="bi bi-currency-dollar text-success fs-4"></i>
+                </div>
+                <div>
+                    <div class="fs-4 fw-bold">{{ "{:,.0f}".format(stats.valeur_totale) }} <small class="text-muted" style="font-size:.6em">FCFA</small></div>
+                    <div class="text-muted small">Valeur stock (achat)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-3 p-2 bg-danger bg-opacity-10">
+                    <i class="bi bi-exclamation-triangle text-danger fs-4"></i>
+                </div>
+                <div>
+                    <div class="fs-4 fw-bold text-danger">{{ stats.nb_rupture }}</div>
+                    <div class="text-muted small">Ruptures</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-3 p-2 bg-warning bg-opacity-10">
+                    <i class="bi bi-exclamation-circle text-warning fs-4"></i>
+                </div>
+                <div>
+                    <div class="fs-4 fw-bold text-warning">{{ stats.nb_stock_bas }}</div>
+                    <div class="text-muted small">Stock bas</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <a href="{{ url_for('mouvement_entree') }}" class="stat-card d-block text-decoration-none text-dark text-center p-3">
+            <i class="bi bi-box-arrow-in-down text-success fs-3"></i>
+            <div class="fw-semibold mt-1">Entrée de stock</div>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="{{ url_for('mouvement_sortie') }}" class="stat-card d-block text-decoration-none text-dark text-center p-3">
+            <i class="bi bi-box-arrow-up text-warning fs-3"></i>
+            <div class="fw-semibold mt-1">Sortie de stock</div>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="{{ url_for('produit_add') }}" class="stat-card d-block text-decoration-none text-dark text-center p-3">
+            <i class="bi bi-plus-circle text-primary fs-3"></i>
+            <div class="fw-semibold mt-1">Nouveau produit</div>
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Chart: Mouvements 7 jours -->
+    <div class="col-lg-8">
+        <div class="stat-card p-3">
+            <h6 class="fw-bold mb-3"><i class="bi bi-bar-chart text-primary"></i> Mouvements — 7 derniers jours</h6>
+            <canvas id="chartMouvements" height="220"></canvas>
+        </div>
+    </div>
+
+    <!-- Alertes actives -->
+    <div class="col-lg-4">
+        <div class="stat-card p-3">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold mb-0"><i class="bi bi-bell text-danger"></i> Alertes</h6>
+                <a href="{{ url_for('alertes_list') }}" class="btn btn-sm btn-outline-secondary">Tout voir</a>
+            </div>
+            {% if alertes_actives %}
+            {% for a in alertes_actives[:6] %}
+            <div class="d-flex align-items-start gap-2 py-2 border-bottom">
+                <i class="bi {{ a.type_icone }} text-{{ a.type_couleur }} mt-1"></i>
+                <div class="small">
+                    <div class="text-truncate" style="max-width:220px">{{ a.message }}</div>
+                    <div class="text-muted" style="font-size:.75rem">{{ a.created_at.strftime('%d/%m %H:%M') }}</div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p class="text-muted text-center small py-3"><i class="bi bi-check-circle text-success"></i> Aucune alerte active</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mt-2">
+    <!-- Produits en rupture -->
+    {% if produits_rupture %}
+    <div class="col-lg-6">
+        <div class="stat-card p-3">
+            <h6 class="fw-bold mb-3 text-danger"><i class="bi bi-x-octagon"></i> Ruptures de stock</h6>
+            <div class="table-responsive">
+                <table class="table table-sm table-hover mb-0">
+                    <thead><tr><th>Produit</th><th>Catégorie</th><th>Fournisseur</th><th></th></tr></thead>
+                    <tbody>
+                    {% for p in produits_rupture[:8] %}
+                    <tr>
+                        <td class="fw-semibold">{{ p.nom }}</td>
+                        <td><span class="badge bg-{{ p.categorie.couleur }} bg-opacity-25 text-{{ p.categorie.couleur }}">{{ p.categorie.nom }}</span></td>
+                        <td class="small text-muted">{{ p.fournisseur.nom if p.fournisseur else '—' }}</td>
+                        <td><a href="{{ url_for('mouvement_entree') }}?produit_id={{ p.id }}" class="btn btn-sm btn-success"><i class="bi bi-plus"></i></a></td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Mouvements récents -->
+    <div class="col-lg-{{ '6' if produits_rupture else '12' }}">
+        <div class="stat-card p-3">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold mb-0"><i class="bi bi-arrow-left-right text-primary"></i> Derniers mouvements</h6>
+                <a href="{{ url_for('mouvements_list') }}" class="btn btn-sm btn-outline-secondary">Historique</a>
+            </div>
+            {% if mouvements_recents %}
+            <div class="table-responsive">
+                <table class="table table-sm table-hover mb-0">
+                    <thead><tr><th>Produit</th><th>Type</th><th>Qté</th><th>Par</th><th>Date</th></tr></thead>
+                    <tbody>
+                    {% for mv in mouvements_recents %}
+                    <tr>
+                        <td class="fw-semibold small">{{ mv.produit.nom }}</td>
+                        <td><span class="badge bg-{{ mv.type_couleur }}">{{ mv.type_label }}</span></td>
+                        <td>{{ mv.quantite }}</td>
+                        <td class="small text-muted">{{ mv.user.prenom }}</td>
+                        <td class="small text-muted">{{ mv.date_mouvement.strftime('%d/%m %H:%M') }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted text-center small py-3">Aucun mouvement récent</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script>
+const ctx = document.getElementById('chartMouvements');
+if (ctx) {
+    const chartData = {{ chart_data|tojson }};
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartData.map(d => d.jour),
+            datasets: [
+                {
+                    label: 'Entrées',
+                    data: chartData.map(d => d.entrees),
+                    backgroundColor: 'rgba(25, 135, 84, 0.7)',
+                    borderRadius: 4
+                },
+                {
+                    label: 'Sorties',
+                    data: chartData.map(d => d.sorties),
+                    backgroundColor: 'rgba(255, 193, 7, 0.7)',
+                    borderRadius: 4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'top' } },
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+    });
+}
+</script>
+{% endblock %}

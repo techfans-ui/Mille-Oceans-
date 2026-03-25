@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Modifier' if categorie else 'Nouvelle' }} catégorie — Mille Oceans{% endblock %}
+{% block page_title %}Catégories > {{ 'Modifier' if categorie else 'Ajouter' }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="stat-card p-4">
+            <h5 class="fw-bold mb-4">
+                <i class="bi bi-{{ 'pencil' if categorie else 'plus-circle' }} text-primary"></i>
+                {{ 'Modifier la catégorie' if categorie else 'Nouvelle catégorie' }}
+            </h5>
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Nom *</label>
+                    <input type="text" name="nom" class="form-control" value="{{ categorie.nom if categorie else '' }}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Description</label>
+                    <textarea name="description" class="form-control" rows="2">{{ categorie.description if categorie else '' }}</textarea>
+                </div>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Icône Bootstrap</label>
+                        <select name="icone" class="form-select">
+                            {% for ic in ['bi-cup-straw', 'bi-cup', 'bi-cup-hot', 'bi-droplet', 'bi-water', 'bi-stars', 'bi-box', 'bi-gift'] %}
+                            <option value="{{ ic }}" {{ 'selected' if categorie and categorie.icone == ic }}>{{ ic }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Couleur</label>
+                        <select name="couleur" class="form-select">
+                            {% for col in ['primary', 'success', 'danger', 'warning', 'info', 'secondary'] %}
+                            <option value="{{ col }}" {{ 'selected' if categorie and categorie.couleur == col }}>{{ col }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> {{ 'Enregistrer' if categorie else 'Créer' }}</button>
+                    <a href="{{ url_for('categories_list') }}" class="btn btn-outline-secondary">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

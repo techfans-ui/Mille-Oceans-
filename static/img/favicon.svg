@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <circle cx="32" cy="32" r="30" fill="#0077b6"/>
+  <circle cx="32" cy="32" r="26" fill="#023e8a"/>
+  <!-- Wave -->
+  <path d="M10 34 Q18 26 26 34 Q34 42 42 34 Q50 26 54 34" stroke="#caf0f8" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M10 40 Q18 32 26 40 Q34 48 42 40 Q50 32 54 40" stroke="rgba(202,240,248,0.5)" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- M O -->
+  <text x="32" y="28" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="bold" fill="#ffffff">MO</text>
+</svg>

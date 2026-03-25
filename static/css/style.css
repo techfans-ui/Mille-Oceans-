@@ -1,0 +1,120 @@
+/* ============================================================
+   Mille Oceans — Styles personnalisés
+   ============================================================ */
+
+/* -- Variables globales -- */
+:root {
+    --mo-primary: #0d6efd;
+    --mo-ocean: #0077b6;
+    --mo-dark: #023e8a;
+    --mo-light: #caf0f8;
+    --mo-gradient: linear-gradient(135deg, #023e8a 0%, #0077b6 50%, #00b4d8 100%);
+}
+
+/* -- Typographie -- */
+body {
+    background: #f4f6fb;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+h1, h2, h3, h4, h5, h6 { font-weight: 700; }
+
+/* -- Stat Cards -- */
+.stat-card {
+    background: #fff; border-radius: .75rem; padding: 1.2rem;
+    border: 1px solid #e9ecef; transition: all .2s;
+}
+.stat-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.08); transform: translateY(-1px); }
+
+/* -- Badges stock -- */
+.badge-stock-ok { background: #d4edda; color: #155724; }
+.badge-stock-bas { background: #fff3cd; color: #856404; }
+.badge-stock-critique { background: #f8d7da; color: #721c24; }
+.badge-rupture { background: #dc3545; color: #fff; }
+
+/* -- Tables -- */
+.table-hover tbody tr:hover { background: var(--mo-light); }
+.table td { vertical-align: middle; }
+
+/* -- Avatars -- */
+.avatar-lg {
+    width: 80px; height: 80px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 2rem; color: #fff;
+}
+
+/* -- Cards Form -- */
+.card-form {
+    background: #fff; border-radius: .75rem; padding: 2rem;
+    border: 1px solid #e9ecef; box-shadow: 0 2px 10px rgba(0,0,0,.04);
+}
+
+/* -- Auth pages -- */
+.auth-container {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--mo-gradient);
+}
+.auth-card {
+    background: #fff; border-radius: 1rem; padding: 2.5rem;
+    box-shadow: 0 10px 40px rgba(0,0,0,.15); max-width: 440px; width: 100%;
+}
+.auth-card .logo { font-size: 2rem; color: var(--mo-dark); font-weight: 700; }
+
+/* -- Boutons -- */
+.btn-ocean { background: var(--mo-ocean); color: #fff; border: none; }
+.btn-ocean:hover { background: var(--mo-dark); color: #fff; }
+
+/* -- Bell animation -- */
+@keyframes bellShake {
+    0%, 100% { transform: rotate(0); }
+    20%, 60% { transform: rotate(8deg); }
+    40%, 80% { transform: rotate(-8deg); }
+}
+.bell-shake { animation: bellShake .5s ease-in-out; }
+
+/* -- Empty state -- */
+.empty-state {
+    text-align: center; padding: 3rem 1rem; color: #adb5bd;
+}
+.empty-state i { font-size: 3rem; display: block; margin-bottom: 1rem; }
+
+/* -- Print -- */
+@media print {
+    .sidebar, .top-bar, .no-print, .btn { display: none !important; }
+    .main-content { margin-left: 0 !important; }
+    .content-area { padding: 0 !important; }
+    .stat-card { border: 1px solid #ddd !important; box-shadow: none !important; break-inside: avoid; }
+    body { background: #fff !important; }
+    @page { margin: 1cm; }
+}
+
+/* -- Scrollbar sidebar -- */
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); border-radius: 3px; }
+
+/* -- Alert animation -- */
+.alert { animation: fadeInDown .3s ease; }
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* -- Mobile touch optimizations -- */
+@media (max-width: 767.98px) {
+    .btn { min-height: 44px; min-width: 44px; }
+    .nav-link { min-height: 48px; }
+    .form-control, .form-select { font-size: 16px !important; /* Prevent iOS zoom */ }
+    .table { font-size: .85rem; }
+    .stat-card { padding: .9rem; }
+    .content-area { padding: 1rem .75rem; }
+    .top-bar { padding: .5rem .75rem; }
+    h1, .fs-4 { font-size: 1.2rem !important; }
+}
+
+/* -- Overlay backdrop for mobile sidebar -- */
+.sidebar-backdrop {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.4); z-index: 1029;
+}
+.sidebar.show ~ .sidebar-backdrop { display: block; }

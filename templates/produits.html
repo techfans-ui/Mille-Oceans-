@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Produits — Mille Oceans{% endblock %}
+{% block page_title %}Inventaire > Produits{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0"><i class="bi bi-box-seam text-primary"></i> Produits</h4>
+    {% if current_user.is_manager() %}
+    <a href="{{ url_for('produit_add') }}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Nouveau produit</a>
+    {% endif %}
+</div>
+
+<!-- Filtres -->
+<div class="stat-card p-3 mb-4">
+    <form method="GET" class="row g-2 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label small fw-semibold">Rechercher</label>
+            <input type="text" name="q" class="form-control" placeholder="Nom, code-barre, marque…" value="{{ search }}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-semibold">Catégorie</label>
+            <select name="categorie" class="form-select">
+                <option value="">Toutes</option>
+                {% for c in categories %}
+                <option value="{{ c.id }}" {{ 'selected' if cat_id == c.id }}>{{ c.nom }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-semibold">Filtre stock</label>
+            <select name="filtre" class="form-select">
+                <option value="">Tous</option>
+                <option value="rupture" {{ 'selected' if filtre == 'rupture' }}>Rupture</option>
+                <option value="stock_bas" {{ 'selected' if filtre == 'stock_bas' }}>Stock bas</option>
+                <option value="surstock" {{ 'selected' if filtre == 'surstock' }}>Surstock</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i> Filtrer</button>
+        </div>
+    </form>
+</div>
+
+<!-- Liste produits -->
+<div class="stat-card p-0">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Produit</th>
+                    <th>Catégorie</th>
+                    <th class="text-center">Stock</th>
+                    <th>Niveau</th>
+                    <th class="text-end">Prix vente</th>
+                    <th class="text-end">Valeur</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for p in produits %}
+            <tr>
+                <td>
+                    <a href="{{ url_for('produit_detail', pid=p.id) }}" class="text-decoration-none text-dark">
+                        <div class="fw-semibold">{{ p.nom }}</div>
+                        <div class="text-muted small">{{ p.marque or '' }} {{ p.volume or '' }}</div>
+                    </a>
+                </td>
+                <td><span class="badge bg-{{ p.categorie.couleur }} bg-opacity-25 text-{{ p.categorie.couleur }}"><i class="bi {{ p.categorie.icone }}"></i> {{ p.categorie.nom }}</span></td>
+                <td class="text-center">
+                    <span class="fw-bold {% if p.est_rupture %}text-danger{% elif p.est_stock_bas %}text-warning{% else %}text-success{% endif %}">
+                        {{ p.quantite_stock }}
+                    </span>
+                    <span class="text-muted small">{{ p.unite }}</span>
+                </td>
+                <td style="width:120px">
+                    <div class="progress" style="height:6px">
+                        {% set pct = p.niveau_stock_pct %}
+                        <div class="progress-bar bg-{{ 'danger' if pct < 15 else ('warning' if pct < 40 else 'success') }}"
+                             style="width:{{ pct }}%"></div>
+                    </div>
+                    <span class="text-muted" style="font-size:.7rem">{{ p.quantite_stock }}/{{ p.stock_maximum }}</span>
+                </td>
+                <td class="text-end fw-semibold">{{ "{:,.0f}".format(p.prix_vente) }} <small class="text-muted">FCFA</small></td>
+                <td class="text-end text-muted small">{{ "{:,.0f}".format(p.valeur_stock) }}</td>
+                <td class="text-end">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="bi bi-three-dots"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{{ url_for('produit_detail', pid=p.id) }}"><i class="bi bi-eye"></i> Voir</a></li>
+                            {% if current_user.is_manager() %}
+                            <li><a class="dropdown-item" href="{{ url_for('produit_edit', pid=p.id) }}"><i class="bi bi-pencil"></i> Modifier</a></li>
+                            {% endif %}
+                            <li><a class="dropdown-item text-success" href="{{ url_for('mouvement_entree') }}"><i class="bi bi-plus"></i> Entrée</a></li>
+                            <li><a class="dropdown-item text-warning" href="{{ url_for('mouvement_sortie') }}"><i class="bi bi-dash"></i> Sortie</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+            {% if not produits %}
+            <tr><td colspan="7" class="text-center text-muted py-4">Aucun produit trouvé.</td></tr>
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<p class="text-muted small mt-2">{{ produits|length }} produit(s) affiché(s)</p>
+{% endblock %}
