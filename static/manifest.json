@@ -6,6 +6,12 @@
     "start_url": "/",
     "scope": "/",
     "display": "standalone",
+    "display_override": [
+        "window-controls-overlay",
+        "standalone",
+        "minimal-ui",
+        "browser"
+    ],
     "background_color": "#023e8a",
     "theme_color": "#0077b6",
     "orientation": "any",
@@ -13,6 +19,7 @@
     "dir": "ltr",
     "categories": ["business", "productivity"],
     "prefer_related_applications": false,
+    "related_applications": [],
     "handle_links": "preferred",
     "launch_handler": {
         "client_mode": "navigate-existing"
@@ -20,6 +27,29 @@
     "edge_side_panel": {
         "preferred_width": 480
     },
+    "share_target": {
+        "action": "/produits",
+        "method": "GET",
+        "params": {
+            "title": "q",
+            "text": "q",
+            "url": "q"
+        }
+    },
+    "protocol_handlers": [
+        {
+            "protocol": "web+milleoceans",
+            "url": "/produits?q=%s"
+        }
+    ],
+    "file_handlers": [
+        {
+            "action": "/mouvements/entree",
+            "accept": {
+                "text/csv": [".csv"]
+            }
+        }
+    ],
     "screenshots": [
         {
             "src": "/static/img/screenshot-wide.png",
