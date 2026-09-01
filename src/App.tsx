@@ -134,6 +134,7 @@ function App() {
 
       <section className="history" id="histoire">
         <div className="history-image">
+          <img src="/origine.jpg" alt="Les terres d’origine du domaine à Banfora, face au lac" />
           <img src="/construction.jpg" alt="Le domaine du Château sur le Lac en construction, au bord du lac" />
         </div>
         <div className="history-copy">
